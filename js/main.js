@@ -111,10 +111,12 @@ var pinCreator = function (obj) {
  * Функция заполняет карту пинами созданными из моковых данных
  */
 var mapPinsFill = function () {
+  var fragment = document.createDocumentFragment();
   var data = dataCreator();
   data.forEach(function (item) {
-    mapPins.append(pinCreator(item));
+    fragment.append(pinCreator(item));
   });
+  mapPins.append(fragment);
 };
 
 mapPinsFill();
