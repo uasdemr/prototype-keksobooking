@@ -1,5 +1,5 @@
 'use strict';
-//Генерация моковых данных
+// Генерация моковых данных
 var mapPins = document.querySelector('.map__pins');
 var map = document.querySelector('.map');
 var pin = document.querySelector('#pin').content.cloneNode(true);
@@ -15,8 +15,7 @@ var timeArr = ['12:00', '13:00', '14:00'];
  * @return {Integer}
  */
 var getRandomInRange = function (min, max) {
-  // return Math.floor(Math.random() * (max - min + 1)) + min;
-  return parseInt(Math.random() * (max - min) + min, 10);
+  return parseInt(Math.random() * (max - min + 1) + min, 10);
 };
 
 var typeObj = {
@@ -47,12 +46,6 @@ var featuresGenerator = function () {
   }
   return resArr;
 };
-
-// var featuresGenerator2 = function () {
-//   var resArr = [];
-//   Object.keys(featuresObj);
-//
-// };
 
 var typeKeys = Object.keys(typeObj);
 /**
@@ -118,12 +111,10 @@ var dataCreator = function () {
   for (var i = 0; i < 8; i++) {
     data.push(mockGenerator(i));
   }
-  //console.log(data);
-  console.log(data);
   return data;
 };
 
-map.classList.remove('map--faded');
+// map.classList.remove('map--faded');
 
 /**
  * Функция создания нового пина
@@ -153,20 +144,15 @@ var mapPinsFill = function () {
   mapPins.append(fragment);
 };
 
-mapPinsFill();
+// mapPinsFill();
 
+// Карточка описания
 /**
- * Функция возвращает строку опций
+ * Функция возвращает доступные опции для карточки
+ * @param {Object} obj
+ * @param {Object} elementFeatures
+ * @return {Object}
  */
-var featuresToString = function (obj) {
-  var featArr = obj.offer.features;
-  var res = '';
-  for (var i = 0; i < featArr.length; i++) {
-    (i < featArr.length - 1) ? res += featuresObj[featArr[i]] + ', ' : res += featuresObj[featArr[i]] + '.';
-  }
-  return res;
-};
-
 var featuresCreator = function (obj, elementFeatures) {
   var fragment = document.createDocumentFragment();
   var featuresArr = obj.offer.features;
@@ -184,30 +170,32 @@ var featuresCreator = function (obj, elementFeatures) {
 
 /**
  * Функция создания заполеннных img
+ * @param {Object} obj
+ * @param {Object} elementPhotos
+ * @return {Object}
  */
- var imgCreator = function (obj, elementPhotos) {
-   var fragment = document.createDocumentFragment();
-   var imgArr = obj.offer.photos;
-   if (imgArr.length === 0) {
-     return null;
-   }
-   imgArr.forEach(function (item) {
-     var popupPhotosImg = elementPhotos.querySelector('img').cloneNode(true);
-     popupPhotosImg.src = item;
-     fragment.append(popupPhotosImg);
-   });
-   return fragment;
- };
-
-// Карточка описания
+var imgCreator = function (obj, elementPhotos) {
+  var fragment = document.createDocumentFragment();
+  var imgArr = obj.offer.photos;
+  if (imgArr.length === 0) {
+    return null;
+  }
+  imgArr.forEach(function (item) {
+    var popupPhotosImg = elementPhotos.querySelector('img').cloneNode(true);
+    popupPhotosImg.src = item;
+    fragment.append(popupPhotosImg);
+  });
+  return fragment;
+};
 var cardTemplate = document.querySelector('#card').content.cloneNode(true);
 /**
 * Функция создания карточки предложения
+* @param {Object} obj
+* @return {Object}
 */
 var cadrCreator = function (obj) {
   var article = cardTemplate.querySelector('.map__card').cloneNode(true);
   var popupAvatar = article.querySelector('.popup__avatar');
-  var popupClose = article.querySelector('.popup__close');
   var popupTitle = article.querySelector('.popup__title');
   var popupTextAddress = article.querySelector('.popup__text--address');
   var popupTextPrice = article.querySelector('.popup__text--price');
@@ -224,13 +212,130 @@ var cadrCreator = function (obj) {
   popupTextPrice.textContent = obj.offer.price + '₽/ночь';
   popupType.textContent = obj.offer.type;
   popupTextCapacity.textContent = '' + obj.offer.rooms + ' комнат для ' + obj.offer.guests + ' гостей';
-  popupTextTime.textContent = 'Заезд после ' + obj.offer.checkin + ', выезд до ' +obj.offer.checkout;
+  popupTextTime.textContent = 'Заезд после ' + obj.offer.checkin + ', выезд до ' + obj.offer.checkout;
   popupFeatures.replaceWith(featuresCreator(obj, popupFeatures));
   popupDescription.textContent = obj.offer.description;
   popupPhotos.replaceWith(imgCreator(obj, popupPhotos));
   return article;
-}
-var mapFiltersContainer = document.querySelector('.map__filters-container');
-for (var i = 0; i < data.length; i++) {
-    mapFiltersContainer.before(cadrCreator(data[i]));
+};
+
+// var mapFiltersContainer = document.querySelector('.map__filters-container');
+// for (var i = 0; i < data.length; i++) {
+//   mapFiltersContainer.before(cadrCreator(data[i]));
+// }
+
+// Обработка событий
+
+var adForm = document.querySelector('.ad-form');
+var filtersForm = document.querySelector('.map__filters');
+var filtersFormElements = filtersForm.elements;
+filtersFormElements = Array.from(filtersFormElements);
+var fldset = adForm.querySelectorAll('fieldset');
+
+/**
+ * Функция деактивирует все элементы формы с классом .ad-form
+ */
+var adFormElementsDisabler = function () {
+  fldset.forEach(function (item) {
+    item.setAttribute('disabled', 'true');
+  });
+};
+
+/**
+ * Функция деактивирует все элементы формы с классом .map__filters
+ */
+var filtersFormElementsDisabler = function () {
+  filtersFormElements.forEach(function (item) {
+    item.setAttribute('disabled', 'true');
+  });
+};
+adFormElementsDisabler();
+filtersFormElementsDisabler();
+
+/**
+ * Функция активирует карту
+ */
+var mapEnabler = function () {
+  map.classList.remove('map--faded');
+};
+
+/**
+ * Функция активирует форму
+ */
+var adFormEnabler = function () {
+  adForm.classList.remove('ad-form--disabled');
+};
+
+/**
+ * Функция активирует все элементы формы с классом .ad-form
+ */
+var adFormElementsEnabler = function () {
+  fldset.forEach(function (item) {
+    item.removeAttribute('disabled');
+  });
+};
+
+/**
+ * Функция активирует все элементы формы с классом .map__filters
+ */
+var filtersFormElementsEnabler = function () {
+  filtersFormElements.forEach(function (item) {
+    item.removeAttribute('disabled');
+  });
+};
+
+/**
+ * Обработчик нажатия на кнопку мыши
+ */
+var mainPinMousedownHandler = function () {
+  mapEnabler();
+  adFormEnabler();
+  adFormElementsEnabler();
+  filtersFormElementsEnabler();
+  mapPinsFill();
+  mainPinCoords();
+};
+
+/**
+ * Обработчик нажатия Enter на кливиатуре
+ */
+var mainPinKeydownHandler = function () {
+  mapEnabler();
+  adFormEnabler();
+  adFormElementsEnabler();
+  filtersFormElementsEnabler();
+  mapPinsFill();
+  mainPinCoords();
+};
+
+var mainPin = document.querySelector('.map__pin--main');
+
+mainPin.addEventListener('mousedown', function (evt) {
+  if (evt.which === 1) {
+    mainPinMousedownHandler();
   }
+});
+mainPin.addEventListener('keydown', function (evt) {
+  if (evt.key === 'Enter') {
+    mainPinKeydownHandler();
+  }
+});
+
+var HALF_MAIN_PIN = 32;
+var FULL_MAIN_PIN = 65;
+var adFormAddress = document.querySelector('#address');
+
+/**
+ * Функция определения координат драгПина
+ */
+var mainPinCoords = function () {
+  var str = '';
+  if (!map.classList.contains('map--faded')) {
+    str = (mainPin.offsetLeft + HALF_MAIN_PIN) + ', ' + (mainPin.offsetTop + FULL_MAIN_PIN + 22);
+    adFormAddress.placeholder = str;
+  } else {
+    str = (mainPin.offsetLeft + HALF_MAIN_PIN) + ', ' + (mainPin.offsetTop + HALF_MAIN_PIN);
+    adFormAddress.placeholder = str;
+  }
+};
+mainPinCoords();
