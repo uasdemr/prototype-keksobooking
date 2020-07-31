@@ -323,6 +323,7 @@ mainPin.addEventListener('keydown', function (evt) {
 
 var HALF_MAIN_PIN = 32;
 var FULL_MAIN_PIN = 65;
+var BOTTOM_POINT_MAIN_PIN = 22;
 var adFormAddress = document.querySelector('#address');
 
 /**
@@ -331,11 +332,48 @@ var adFormAddress = document.querySelector('#address');
 var mainPinCoords = function () {
   var str = '';
   if (!map.classList.contains('map--faded')) {
-    str = (mainPin.offsetLeft + HALF_MAIN_PIN) + ', ' + (mainPin.offsetTop + FULL_MAIN_PIN + 22);
+    str = (mainPin.offsetLeft + HALF_MAIN_PIN) + ', ' + (mainPin.offsetTop + FULL_MAIN_PIN + BOTTOM_POINT_MAIN_PIN);
     adFormAddress.placeholder = str;
+    adFormAddress.value = str;
+    adFormAddress.disabled = true;
   } else {
     str = (mainPin.offsetLeft + HALF_MAIN_PIN) + ', ' + (mainPin.offsetTop + HALF_MAIN_PIN);
     adFormAddress.placeholder = str;
+    adFormAddress.value = str;
+    adFormAddress.disabled = true;
   }
 };
 mainPinCoords();
+
+var roomNumber = document.querySelector('#room_number');
+
+var roomNumberToCapacitySyncHandler = function (evt) {
+  var capacity = document.querySelector('#capacity');
+  var select = document.createElement('select');
+  var num = parseInt(evt.target.value, 10);
+  select.id = 'capacity';
+  select.name = 'capacity';
+  var opt;
+  if (num === 100) {
+    opt = new Option();
+    opt.value = 0;
+    opt.text = 'не для гостей';
+    select.add(opt);
+    capacity.replaceWith(select);
+  }
+  if (num <= 3 && num >= 1) {
+    for (var i = num; i >= 1; i--) {
+      opt = new Option();
+      opt.value = i;
+      opt.text = 'для ' + i + ' гостей';
+      if (i === 1) {
+        opt.text = 'для ' + i + ' гостя';
+      }
+      select.add(opt);
+      capacity.replaceWith(select);
+    }
+  }
+};
+roomNumber.addEventListener('click', roomNumberToCapacitySyncHandler);
+var myEvent = new Event('click');
+roomNumber.dispatchEvent(myEvent);
