@@ -219,7 +219,7 @@ var cadrCreator = function (obj) {
   return article;
 };
 
-// var mapFiltersContainer = document.querySelector('.map__filters-container');
+var mapFiltersContainer = document.querySelector('.map__filters-container');
 // for (var i = 0; i < data.length; i++) {
 //   mapFiltersContainer.before(cadrCreator(data[i]));
 // }
@@ -286,40 +286,43 @@ var filtersFormElementsEnabler = function () {
 
 /**
  * Обработчик нажатия на кнопку мыши
+ * @param {Object} evt
  */
-var mainPinMousedownHandler = function () {
-  mapEnabler();
-  adFormEnabler();
-  adFormElementsEnabler();
-  filtersFormElementsEnabler();
-  mapPinsFill();
-  mainPinCoords();
+var mainPinMousedownHandler = function (evt) {
+  if (evt.which === 1) {
+    mapEnabler();
+    adFormEnabler();
+    adFormElementsEnabler();
+    filtersFormElementsEnabler();
+    mapPinsFill();
+    mainPinCoords();
+    mainPin.removeEventListener('keydown', mainPinKeydownHandler);
+  }
 };
 
 /**
  * Обработчик нажатия Enter на кливиатуре
+ * @param {Object} evt
  */
-var mainPinKeydownHandler = function () {
-  mapEnabler();
-  adFormEnabler();
-  adFormElementsEnabler();
-  filtersFormElementsEnabler();
-  mapPinsFill();
-  mainPinCoords();
+var mainPinKeydownHandler = function (evt) {
+  if (evt.code === 'Enter') {
+    mapEnabler();
+    adFormEnabler();
+    adFormElementsEnabler();
+    filtersFormElementsEnabler();
+    mapPinsFill();
+    mainPinCoords();
+    mainPin.removeEventListener('mousedown', mainPinMousedownHandler);
+  } else {
+    mainPin.addEventListener('keydown', mainPinKeydownHandler, {once: true});
+  }
 };
 
 var mainPin = document.querySelector('.map__pin--main');
 
-mainPin.addEventListener('mousedown', function (evt) {
-  if (evt.which === 1) {
-    mainPinMousedownHandler();
-  }
-});
-mainPin.addEventListener('keydown', function (evt) {
-  if (evt.key === 'Enter') {
-    mainPinKeydownHandler();
-  }
-});
+mainPin.addEventListener('mousedown', mainPinMousedownHandler, {once: true});
+
+mainPin.addEventListener('keydown', mainPinKeydownHandler, {once: true});
 
 var HALF_MAIN_PIN = 32;
 var FULL_MAIN_PIN = 65;
@@ -335,13 +338,12 @@ var mainPinCoords = function () {
     str = (mainPin.offsetLeft + HALF_MAIN_PIN) + ', ' + (mainPin.offsetTop + FULL_MAIN_PIN + BOTTOM_POINT_MAIN_PIN);
     adFormAddress.placeholder = str;
     adFormAddress.value = str;
-    adFormAddress.disabled = true;
   } else {
     str = (mainPin.offsetLeft + HALF_MAIN_PIN) + ', ' + (mainPin.offsetTop + HALF_MAIN_PIN);
     adFormAddress.placeholder = str;
     adFormAddress.value = str;
-    adFormAddress.disabled = true;
   }
+  adFormAddress.disabled = true;
 };
 mainPinCoords();
 
@@ -377,3 +379,60 @@ var roomNumberToCapacitySyncHandler = function (evt) {
 roomNumber.addEventListener('click', roomNumberToCapacitySyncHandler);
 var myEvent = new Event('click');
 roomNumber.dispatchEvent(myEvent);
+
+// Карточки объявлений
+
+var getData = function (addressX, addressY) {
+  var res;
+  for (var i = 0; i < data.length; i++) {
+    if ((parseInt(data[i].location.x, 10) === addressX && parseInt(data[i].location.y, 10) === addressY)) {
+      res = data[i];
+    }
+  }
+  return res;
+};
+
+var cardRemover = function () {
+  var mapCard = map.querySelector('.map__card.popup');
+  if (mapCard) {
+    mapCard.remove();
+  }
+};
+/**
+ * Функция отрисовки карточки предложения
+ * @param {Object} evt
+ */
+var cardRender = function (evt) {
+  cardRemover();
+  var btn = (evt.target.nodeName === 'IMG') ? evt.target.parentNode : evt.target;
+  if (btn.tagName === 'BUTTON' && !btn.classList.contains('map__pin--main')) {
+    var addressX = parseInt(btn.style.left, 10);
+    var addressY = parseInt(btn.style.top, 10);
+    var obj = (getData(addressX, addressY));
+    mapFiltersContainer.before(cadrCreator(obj));
+
+    var popupClose = document.querySelector('.popup__close');
+    popupClose.addEventListener('click', cardRemover);
+
+  }
+};
+
+var mapPinsClickHandler = function (evt) {
+  cardRender(evt);
+};
+
+var mapPinsKeydownHandler = function (evt) {
+  if (evt.key === 'Enter') {
+    cardRender(evt);
+  }
+};
+
+mapPins.addEventListener('click', mapPinsClickHandler);
+mapPins.addEventListener('keydown', mapPinsKeydownHandler);
+
+var documentKeydownHandler = function (evt) {
+  if (evt.key === 'Escape') {
+    cardRemover();
+  }
+};
+document.addEventListener('keydown', documentKeydownHandler);
