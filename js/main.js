@@ -329,6 +329,11 @@ var FULL_MAIN_PIN = 65;
 var BOTTOM_POINT_MAIN_PIN = 22;
 var adFormAddress = document.querySelector('#address');
 
+var addressDisablerEnablerHandler = function () {
+  adFormAddress.removeAttribute('disabled');
+};
+adForm.addEventListener('submit', addressDisablerEnablerHandler);
+
 /**
  * Функция определения координат драгПина
  */
@@ -436,3 +441,47 @@ var documentKeydownHandler = function (evt) {
   }
 };
 document.addEventListener('keydown', documentKeydownHandler);
+
+var priceForTypeObj = {
+  'bungalo': '0',
+  'flat': '1000',
+  'house': '5000',
+  'palace': '10000'
+};
+
+var adFormType = document.querySelector('#type');
+var adFormPrice = document.querySelector('#price');
+var adFormTypeChangeHandler = function (evt) {
+  adFormPrice.placeholder = priceForTypeObj[evt.target.value];
+  adFormPrice.min = priceForTypeObj[evt.target.value];
+
+};
+adFormType.addEventListener('change', adFormTypeChangeHandler);
+var myEventType = new Event('change');
+adFormType.dispatchEvent(myEventType);
+
+var adFormResetHandler = function () {
+  adFormPrice.placeholder = '1000';
+  adFormPrice.min = '1000';
+};
+adForm.addEventListener('reset', adFormResetHandler);
+
+var timein = document.querySelector('#timein');
+var timeout = document.querySelector('#timeout');
+
+var timeinTimeoutSynchronizer = function (elem) {
+  if (elem.id === 'timein') {
+    timeout.value = elem.value;
+  } else if (elem.id === 'timeout') {
+    timein.value = elem.value;
+  }
+};
+var timeinChangeHandler = function () {
+  timeinTimeoutSynchronizer(timein);
+};
+var timeoutChangeHandler = function () {
+  timeinTimeoutSynchronizer(timeout);
+};
+
+timein.addEventListener('change', timeinChangeHandler);
+timeout.addEventListener('change', timeoutChangeHandler);
