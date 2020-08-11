@@ -6,11 +6,6 @@
     if (!selector) {
       throw new Error('No selector provided');
     }
-    this.HALF_MAIN_PIN = 32;
-    this.FULL_MAIN_PIN = 65;
-    this.BOTTOM_POINT_MAIN_PIN = 22;
-    this.map = document.querySelector('.map');
-    this.adFormAddress = document.querySelector('#address');
     this.mainPin = document.querySelector(selector);
 
     if (!this.mainPin) {
@@ -18,18 +13,39 @@
     }
   }
 
-  MainPin.prototype.coordinates = function () {
+  var FULL_MAIN_PIN = 65;
+  var BOTTOM_POINT_MAIN_PIN = 22;
+  var HALF_MAIN_PIN = 32;
+  var TOP_LIMIT = 130;
+  var BOTTOM_LIMIT = 630;
+  var HALF_MAP_PIN_MAIN_WIDTH = 32;
+  var HALF_MAP_MAIN_HEIGHT = 32;
+  var MAP_PIN_MAIN_HEIGHT = 65;
+  var startCoords = {};
+  var newLoc = {};
+  var shift = {};
+  var mainPin = document.querySelector('.map__pin--main');
+  var map = document.querySelector('.map');
+  var mapWidth = parseInt(map.offsetWidth, 10);
+  var adFormAddress = document.querySelector('#address');
+
+  var coordinates = function () {
     var str = '';
-    if (!this.map.classList.contains('map--faded')) {
-      str = (this.mainPin.offsetLeft + this.HALF_MAIN_PIN) + ', ' + (this.mainPin.offsetTop + this.FULL_MAIN_PIN + this.BOTTOM_POINT_MAIN_PIN);
-      this.adFormAddress.placeholder = str;
-      this.adFormAddress.value = str;
+    if (!map.classList.contains('map--faded')) {
+      str = (mainPin.offsetLeft + HALF_MAIN_PIN) + ', ' + (mainPin.offsetTop + FULL_MAIN_PIN + BOTTOM_POINT_MAIN_PIN);
+      adFormAddress.placeholder = str;
+      adFormAddress.value = str;
     } else {
-      str = (this.mainPin.offsetLeft + this.HALF_MAIN_PIN) + ', ' + (this.mainPin.offsetTop + this.HALF_MAIN_PIN);
-      this.adFormAddress.placeholder = str;
-      this.adFormAddress.value = str;
+      str = (mainPin.offsetLeft + HALF_MAIN_PIN) + ', ' + (mainPin.offsetTop + HALF_MAIN_PIN);
+      adFormAddress.placeholder = str;
+      adFormAddress.value = str;
     }
-    this.adFormAddress.disabled = true;
+    adFormAddress.disabled = true;
+    return str;
+  };
+
+  MainPin.prototype.getCoordinates = function () {
+    return coordinates();
   };
 
   /**
@@ -38,7 +54,6 @@
   * @param {Object} cb
   */
   MainPin.prototype.addClickHandler = function (cb) {
-    console.log('Setting click handler for mainPin');
     this.mainPin.addEventListener('click', function (evt) {
       var mapFadded = document.querySelector('.map--faded');
       if (evt.which === 1 && mapFadded) {
@@ -52,7 +67,6 @@
   * @param {Object} cb
   */
   MainPin.prototype.addKeydownHandler = function (cb) {
-    console.log('Setting keydown handler for mainPin');
 
     this.mainPin.addEventListener('keydown', function (evt) {
       var mapFadded = document.querySelector('.map--faded');
@@ -60,6 +74,55 @@
         cb();
       }
     }, {'once': true});
+  };
+
+  var mainPinMousedownHandler = function (evt) {
+    if (evt.button === 0) {
+
+      startCoords = {
+        x: evt.clientX,
+        y: evt.clientY
+      };
+      document.body.addEventListener('mousemove', mainPinMousemoveHandler);
+      document.body.addEventListener('mouseup', mainPinMouseupHandler);
+    }
+  };
+
+  var mainPinMousemoveHandler = function (evt) {
+    shift = {
+      x: startCoords.x - evt.clientX,
+      y: startCoords.y - evt.clientY
+    };
+
+    startCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
+
+    newLoc.x = mainPin.offsetLeft - shift.x;
+    newLoc.y = mainPin.offsetTop - shift.y;
+
+    if (newLoc.x >= -HALF_MAP_PIN_MAIN_WIDTH && newLoc.x <= mapWidth - HALF_MAP_PIN_MAIN_WIDTH) {
+      mainPin.style.left = newLoc.x + 'px';
+    }
+
+    if (newLoc.y >= TOP_LIMIT - HALF_MAP_MAIN_HEIGHT && newLoc.y + MAP_PIN_MAIN_HEIGHT <= BOTTOM_LIMIT + MAP_PIN_MAIN_HEIGHT) {
+      mainPin.style.top = newLoc.y + 'px';
+    }
+  };
+
+  var mainPinMouseupHandler = function () {
+    coordinates();
+    mainPinRemoveHandler();
+  };
+
+  var mainPinRemoveHandler = function () {
+    document.body.removeEventListener('mousemove', mainPinMousemoveHandler);
+    document.body.removeEventListener('mouseup', mainPinMouseupHandler);
+  };
+
+  MainPin.prototype.addMousedownHandler = function () {
+    this.mainPin.addEventListener('mousedown', mainPinMousedownHandler);
   };
 
   App.MainPin = MainPin;

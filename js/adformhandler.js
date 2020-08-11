@@ -14,8 +14,6 @@
 
     this.fldset = this.formElement.querySelectorAll('fieldset');
     this.adFormType = document.querySelector('#type');
-    // this.adFormPrice = document.querySelector('#price');
-    // this.roomNumber = document.querySelector('#room_number');
     this.priceForTypeObj = {
       'bungalo': '0',
       'flat': '1000',
@@ -24,6 +22,7 @@
     };
     this.timein = document.querySelector('#timein');
     this.timeout = document.querySelector('#timeout');
+    this.address = this.formElement.querySelector('#address');
   }
   var roomNumber = document.querySelector('#room_number');
   var adFormPrice = document.querySelector('#price');
@@ -72,6 +71,11 @@
 
   AdformHandler.prototype.addressEnabler = function () {
     this.formElement.querySelector('#address').parentNode.removeAttribute('disabled');
+  };
+
+  AdformHandler.prototype.addressSetter = function (str) {
+    this.address.placeholder = str;
+    this.address.value = str;
   };
 
   // var roomNumber = document.querySelector('#room_number');

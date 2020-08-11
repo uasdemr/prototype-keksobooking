@@ -4,7 +4,6 @@
 
   var mapPins = document.querySelector('.map__pins');
   var HALF_PIN = 25;
-  var FULL_PIN = 70;
 
   var timeArr = ['12:00', '13:00', '14:00'];
 
@@ -75,7 +74,7 @@
  */
   var mockGenerator = function (num) {
     var locX = getRandomInRange(HALF_PIN, mapPins.offsetWidth) - HALF_PIN;
-    var locY = getRandomInRange(130, 630) - FULL_PIN;
+    var locY = getRandomInRange(130, 630);
     return {
       'author': {
         'avatar': 'img/avatars/user0' + (num + 1) + '.png'
@@ -109,7 +108,6 @@
   };
 
   function DataStore() {
-    console.log('running the DataStore function');
     this.data = getData();
   }
 
