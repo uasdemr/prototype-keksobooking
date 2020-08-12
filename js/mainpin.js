@@ -32,11 +32,11 @@
   var coordinates = function () {
     var str = '';
     if (!map.classList.contains('map--faded')) {
-      str = (mainPin.offsetLeft + HALF_MAIN_PIN) + ', ' + (mainPin.offsetTop + FULL_MAIN_PIN + BOTTOM_POINT_MAIN_PIN);
+      str = (mainPin.offsetLeft + HALF_MAIN_PIN) + ', ' + (mainPin.offsetTop - FULL_MAIN_PIN - BOTTOM_POINT_MAIN_PIN);
       adFormAddress.placeholder = str;
       adFormAddress.value = str;
     } else {
-      str = (mainPin.offsetLeft + HALF_MAIN_PIN) + ', ' + (mainPin.offsetTop + HALF_MAIN_PIN);
+      str = (mainPin.offsetLeft + HALF_MAIN_PIN) + ', ' + (mainPin.offsetTop - HALF_MAIN_PIN);
       adFormAddress.placeholder = str;
       adFormAddress.value = str;
     }

@@ -7,12 +7,17 @@
   var mapPins = document.querySelector('.map__pins');
   var mapFiltersContainer = document.querySelector('.map__filters-container');
 
-  function Map(data, pin, datastore, card) {
-    this.data = data;
+  function Map(pin, datastore, card) {
+    this.data = [];
     this.pin = pin;
     this.datastore = datastore;
     this.card = card;
   }
+
+  Map.prototype.dataSetter = function (resp) {
+    this.data = resp;
+    console.log(this.data);
+  };
 
   var cardRemover = function () {
     var mapCard = map.querySelector('.map__card.popup');
