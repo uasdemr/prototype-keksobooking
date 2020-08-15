@@ -19,8 +19,9 @@
 
     xhr.addEventListener('load', function () {
       if (xhr.status === this.StatusCode.OK) {
-        this.data = xhr.response;
-        onSuccess(this.data);
+        // this.data = xhr.response;
+        // onSuccess(this.data);
+        onSuccess(xhr.response);
         // window.filter.defaultFilterObjectSetter();
         // onSuccess(window.filter.filterObject);
       } else {

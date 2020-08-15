@@ -1,14 +1,12 @@
 'use strict';
 (function () {
   var App = window.App || {};
-  var Data = new App.DataStore();
+  // var Data = new App.DataStore();
   var Load = new App.Load();
-  Load.getJson(console.log);
   var Pin = new App.Pin();
+  var Card = new App.Card();
   var Map = new App.Map(Pin, Load.getOne, Card);
   Load.getJson(Map.dataSetter.bind(Map));
-  var Card = new App.Card();
-  // var Map = new App.Map(Data.getAll(), Pin, Data.getOne, Card);
   var AdForm = new App.AdformHandler('.ad-form');
   var MainPin = new App.MainPin('.map__pin--main');
   var FiltersForm = new App.MapFiltersForm('.map__filters');

@@ -13,13 +13,12 @@
   Pin.prototype.pinCreator = function (obj) {
     var mapPin = pin.querySelector('.map__pin').cloneNode(true);
     var mapPinImg = mapPin.querySelector('img');
-
-    mapPin.style.left = obj.location.x;
-    mapPin.style.top = obj.location.y;
+    mapPin.style.left = obj.location.x + 'px';
+    mapPin.style.top = obj.location.y + 'px';
     mapPinImg.src = obj.author.avatar;
     mapPinImg.alt = obj.offer.title;
     return mapPin;
-  }
+  };
 
   App.Pin = Pin;
   window.App = App;

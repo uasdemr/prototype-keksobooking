@@ -16,7 +16,6 @@
 
   Map.prototype.dataSetter = function (resp) {
     this.data = resp;
-    console.log(this.data);
   };
 
   var cardRemover = function () {
@@ -40,13 +39,23 @@
     if (btn.tagName === 'BUTTON' && !btn.classList.contains('map__pin--main')) {
       var addressX = parseInt(btn.style.left, 10);
       var addressY = parseInt(btn.style.top, 10);
-      var obj = (this.datastore(addressX, addressY));
+      var obj = (this.getOne(addressX, addressY));
       mapFiltersContainer.before(this.card.cadrCreator(obj));
 
       var popupClose = document.querySelector('.popup__close');
       popupClose.addEventListener('click', cardRemover);
 
     }
+  };
+
+  Map.prototype.getOne = function (addressX, addressY) {
+    var res;
+    for (var i = 0; i < this.data.length; i++) {
+      if ((parseInt(this.data[i].location.x, 10) === addressX && parseInt(this.data[i].location.y, 10) === addressY)) {
+        res = this.data[i];
+      }
+    }
+    return res;
   };
 
   Map.prototype.mapPinsClickHandler = function (evt) {
