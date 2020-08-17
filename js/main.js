@@ -1,19 +1,21 @@
 'use strict';
 (function () {
   var App = window.App || {};
-  // var Data = new App.DataStore();
+  var Upload = new App.Upload();
   var Load = new App.Load();
   var Pin = new App.Pin();
   var Card = new App.Card();
   var Map = new App.Map(Pin, Load.getOne, Card);
   Load.getJson(Map.dataSetter.bind(Map));
-  var AdForm = new App.AdformHandler('.ad-form');
   var MainPin = new App.MainPin('.map__pin--main');
+  var AdForm = new App.AdformHandler('.ad-form', Map, MainPin);
   var FiltersForm = new App.MapFiltersForm('.map__filters');
 
   AdForm.elementsDisabler();
   FiltersForm.elementsDisabler();
   AdForm.addressSetter(MainPin.getCoordinates());
+  AdForm.addSubmitHandler(Upload.sendData.bind(Upload));
+  AdForm.addResetHandler();
 
   var appStarter = function () {
     Map.mapEnabler();
@@ -23,11 +25,9 @@
     AdForm.addRoomNumberChangeHandler();
     AdForm.addressSetter(MainPin.getCoordinates());
     FiltersForm.elementsEnabler();
+    AdForm.addTimeinTimeoutHandler();
     Map.mapPinsFill();
     Map.addMapHandler();
-    AdForm.addSubmitHandler();
-    AdForm.addResetHandler();
-    AdForm.addTimeinTimeoutHandler();
     Map.addDocumentKeyDownHandler();
     MainPin.addMousedownHandler();
   };

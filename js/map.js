@@ -25,6 +25,31 @@
     }
   };
 
+  /**
+   * Деактивирует карту
+   */
+  var mapDeactivator = function () {
+    map.classList.add('map--faded');
+  };
+
+  /**
+   * Удаляет пины
+   */
+  var pisRemover = function () {
+    var pins = mapPins.querySelectorAll('.map__pin:not(.map__pin--main)');
+    for (var i = 0; i < pins.length; i++) {
+      pins[i].remove();
+    }
+  };
+
+  Map.prototype.mapInit = function () {
+    mapDeactivator();
+    pisRemover();
+  };
+
+  /**
+   * Заполняет карту пинами
+   */
   Map.prototype.mapPinsFill = function () {
     var fragment = document.createDocumentFragment();
     this.data.forEach(function (item) {
@@ -33,6 +58,10 @@
     mapPins.append(fragment);
   };
 
+  /**
+   * Отрисовывает карточку объявления
+   * @param {Object} evt
+   */
   Map.prototype.cardRender = function (evt) {
     cardRemover();
     var btn = (evt.target.nodeName === 'IMG') ? evt.target.parentNode : evt.target;

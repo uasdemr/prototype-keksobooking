@@ -56,10 +56,13 @@
   MainPin.prototype.addClickHandler = function (cb) {
     this.mainPin.addEventListener('click', function (evt) {
       var mapFadded = document.querySelector('.map--faded');
+      if (!mapFadded) {
+        return;
+      }
       if (evt.which === 1 && mapFadded) {
         cb();
       }
-    }, {'once': true});
+    });
   };
 
   /**
@@ -67,13 +70,15 @@
   * @param {Object} cb
   */
   MainPin.prototype.addKeydownHandler = function (cb) {
-
     this.mainPin.addEventListener('keydown', function (evt) {
       var mapFadded = document.querySelector('.map--faded');
+      if (!mapFadded) {
+        return;
+      }
       if (evt.code === 'Enter' && mapFadded) {
         cb();
       }
-    }, {'once': true});
+    });
   };
 
   var mainPinMousedownHandler = function (evt) {

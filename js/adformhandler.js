@@ -2,10 +2,11 @@
 (function () {
   var App = window.App || {};
 
-  function AdformHandler(selector) {
+  function AdformHandler(selector, map) {
     if (!selector) {
       throw new Error('No selector provided');
     }
+    this.map = map;
 
     this.formElement = document.querySelector(selector);
     if (!this.formElement) {
@@ -13,7 +14,7 @@
     }
 
     this.fldset = this.formElement.querySelectorAll('fieldset');
-    this.adFormType = document.querySelector('#type');
+    this.adFormType = this.formElement.querySelector('#type');
     this.priceForTypeObj = {
       'bungalo': '0',
       'flat': '1000',
@@ -29,12 +30,26 @@
   var timein = document.querySelector('#timein');
   var timeout = document.querySelector('#timeout');
 
-  AdformHandler.prototype.addSubmitHandler = function () {
+  // Написать функцию для сброса формы к начальным значениям
+  AdformHandler.prototype.formDisabler = function () {
+    this.elementsDisabler();
+    this.map.mapInit();
+  };
+
+  AdformHandler.prototype.addSubmitHandler = function (fn) {
     console.log('Setting submit handler for form');
     this.formElement.addEventListener('submit', function (evt) {
       evt.preventDefault();
-    });
+      this.address.removeAttribute('disabled');
+      var form = new FormData(this.formElement);
+      this.address.disabled = 'true';
+      // Дописать функционал, который выполнится после отправки формы вместо
+      // console.log или после fn - подумать
+      fn(form, console.log);
+      this.formDisabler();
+    }.bind(this));
   };
+
   AdformHandler.prototype.addResetHandler = function () {
     console.log('Setting reset handler for form');
     this.formElement.addEventListener('reset', function (evt) {
@@ -142,6 +157,7 @@
   var adFormTypeChangeHandler = function (evt) {
     adFormPrice.placeholder = priceForTypeObj[evt.target.value];
     adFormPrice.min = priceForTypeObj[evt.target.value];
+    adFormPrice.value = '';
   };
 
   AdformHandler.prototype.addAdFormTypeChangeHandler = function () {
