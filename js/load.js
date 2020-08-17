@@ -9,10 +9,10 @@
     this.StatusCode = {
       OK: 200
     };
-    this.data = [];
+    // this.data = [];
   }
 
-  Load.prototype.getJson = function (onSuccess, onError) {
+  Load.prototype.getJson = function (onSuccess) {
     var xhr = new XMLHttpRequest();
 
     xhr.responseType = 'json';
@@ -25,7 +25,7 @@
         // window.filter.defaultFilterObjectSetter();
         // onSuccess(window.filter.filterObject);
       } else {
-        // onError('Cтатус ответа: ' + xhr.status + ' ' + xhr.statusText);
+        onError('Cтатус ответа: ' + xhr.status + ' ' + xhr.statusText);
       }
     }.bind(this));
 
@@ -42,6 +42,11 @@
     xhr.open('GET', this.URL_TO_UPLOAD_DATA);
     xhr.send();
   };
+
+  var onError = function (message) {
+    throw new Error(message);
+  };
+
 
   App.Load = Load;
   window.App = App;

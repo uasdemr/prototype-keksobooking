@@ -30,6 +30,7 @@
     Map.addMapHandler();
     Map.addDocumentKeyDownHandler();
     MainPin.addMousedownHandler();
+    AdForm.formElement.reset();
   };
   MainPin.addClickHandler(appStarter);
   MainPin.addKeydownHandler(appStarter);

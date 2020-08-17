@@ -29,8 +29,44 @@
   var adFormPrice = document.querySelector('#price');
   var timein = document.querySelector('#timein');
   var timeout = document.querySelector('#timeout');
+  var successTemplate = document.querySelector('#success').content;
+  var successMsg = successTemplate.querySelector('.success').cloneNode(true);
+  var mainPin = document.querySelector('.map__pin--main');
 
-  // Написать функцию для сброса формы к начальным значениям
+  var onSuccessMsg = function () {
+    var main = document.querySelector('main');
+    main.append(successMsg);
+    document.body.addEventListener('keydown', successMsgKeyDownRemoveHandler);
+    document.body.addEventListener('click', bodyOnSuccessMsgClickRemoveHandler);
+    mainPin.focus();
+  };
+
+  var bodyRemoveListener = function () {
+    document.body.removeEventListener('keydown', successMsgKeyDownRemoveHandler);
+    document.body.removeEventListener('click', bodyOnSuccessMsgClickRemoveHandler);
+  };
+
+  var bodyOnSuccessMsgClickRemoveHandler = function () {
+    var success = document.querySelector('.success');
+    if (success) {
+      success.remove();
+      bodyRemoveListener();
+    }
+  };
+
+  var successMsgKeyDownRemoveHandler = function (evt) {
+    var success = document.querySelector('.success');
+    if (evt.code === 'Escape') {
+      if (success) {
+        success.remove();
+        bodyRemoveListener();
+      }
+    }
+  };
+
+  /**
+  * Сбрасывает форму к начальным состояниям
+  */
   AdformHandler.prototype.formDisabler = function () {
     this.elementsDisabler();
     this.map.mapInit();
@@ -43,9 +79,14 @@
       this.address.removeAttribute('disabled');
       var form = new FormData(this.formElement);
       this.address.disabled = 'true';
-      // Дописать функционал, который выполнится после отправки формы вместо
-      // console.log или после fn - подумать
-      fn(form, console.log);
+      // Сюда прилетает Upload.sendData, callback который будет выполняться
+      // при успешной отправке формы
+      fn(form, function () {
+        this.formDisabler();
+        onSuccessMsg();
+
+        this.formElement.reset();
+      }.bind(this));
       this.formDisabler();
     }.bind(this));
   };
