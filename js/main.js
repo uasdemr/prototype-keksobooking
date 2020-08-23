@@ -9,7 +9,6 @@
   var mainPin = new App.MainPin();
   var addForm = new App.AddForm();
   var filtersForm = new App.FiltersForm();
-  addForm.deactivate();
 
   var appStarter = function () {
     addForm.activate();
@@ -17,6 +16,11 @@
     map.activate();
   };
 
-  mainPin.addClickHandler(appStarter);
-  mainPin.addKeydownHandler(appStarter);
+  var DOMContentLoadedHandler = function () {
+    addForm.deactivate();
+    mainPin.initMainPin(appStarter);
+  };
+
+  document.addEventListener('DOMContentLoaded', DOMContentLoadedHandler);
+
 })(window);

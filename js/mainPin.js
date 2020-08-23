@@ -2,49 +2,22 @@
 (function () {
   var App = window.App || {};
 
-  var map = document.querySelector('.map');
-  var adForm = document.querySelector('.ad-form');
-  var mainPin = document.querySelector('.map__pin--main');
-  var HALF_MAIN_PIN = 32;
   var FULL_MAIN_PIN = 65;
   var BOTTOM_POINT_MAIN_PIN = 22;
+  var HALF_MAIN_PIN = 32;
+  var TOP_LIMIT = 130;
+  var BOTTOM_LIMIT = 630;
+  var HALF_MAP_PIN_MAIN_WIDTH = 32;
+  var HALF_MAP_MAIN_HEIGHT = 32;
+  var MAP_PIN_MAIN_HEIGHT = 65;
+  var adForm = document.querySelector('.ad-form');
+  var startCoords = {};
+  var newLoc = {};
+  var shift = {};
+  var mainPin = document.querySelector('.map__pin--main');
+  var map = document.querySelector('.map');
+  var mapWidth = parseInt(map.offsetWidth, 10);
   var adFormAddress = document.querySelector('#address');
-
-  /**
- * Обработчик нажатия на кнопку мыши
- * @param {Object} evt
- */
-  var mainPinMousedownHandler = function (evt) {
-    if (evt.which === 1) {
-      // mapEnabler();
-      // adFormEnabler();
-      // adFormElementsEnabler();
-      // filtersFormElementsEnabler();
-      // mapPinsFill();
-      // mainPinCoords();
-      // mainPin.removeEventListener('keydown', mainPinKeydownHandler);
-    }
-  };
-
-  /**
-   * Обработчик нажатия Enter на кливиатуре
-   * @param {Object} evt
-   */
-  var mainPinKeydownHandler = function (evt) {
-    if (evt.code === 'Enter') {
-      // mapEnabler();
-      // adFormEnabler();
-      // adFormElementsEnabler();
-      // filtersFormElementsEnabler();
-      // mapPinsFill();
-      // mainPinCoords();
-      // mainPin.removeEventListener('mousedown', mainPinMousedownHandler);
-    } else {
-      // mainPin.addEventListener('keydown', mainPinKeydownHandler, { once: true });
-    }
-  };
-  mainPin.addEventListener('mousedown', mainPinMousedownHandler, { once: true });
-  mainPin.addEventListener('keydown', mainPinKeydownHandler, { once: true });
 
   var addressDisablerEnablerHandler = function () {
     adFormAddress.removeAttribute('disabled');
@@ -67,20 +40,60 @@
     }
     adFormAddress.disabled = true;
   };
-  mainPinCoords();
+
+  var mainPinMousedownHandler = function (evt) {
+    if (evt.button === 0) {
+
+      startCoords = {
+        x: evt.clientX,
+        y: evt.clientY
+      };
+      document.body.addEventListener('mousemove', mainPinMousemoveHandler);
+      document.body.addEventListener('mouseup', mainPinMouseupHandler);
+    }
+  };
+
+  var mainPinMousemoveHandler = function (evt) {
+    shift = {
+      x: startCoords.x - evt.clientX,
+      y: startCoords.y - evt.clientY
+    };
+
+    startCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
+
+    newLoc.x = mainPin.offsetLeft - shift.x;
+    newLoc.y = mainPin.offsetTop - shift.y;
+
+    if (newLoc.x >= -HALF_MAP_PIN_MAIN_WIDTH && newLoc.x <= mapWidth - HALF_MAP_PIN_MAIN_WIDTH) {
+      mainPin.style.left = newLoc.x + 'px';
+    }
+
+    if (newLoc.y >= TOP_LIMIT - HALF_MAP_MAIN_HEIGHT && newLoc.y + MAP_PIN_MAIN_HEIGHT <= BOTTOM_LIMIT + MAP_PIN_MAIN_HEIGHT) {
+      mainPin.style.top = newLoc.y + 'px';
+    }
+  };
+
+  var mainPinMouseupHandler = function () {
+    mainPinCoords();
+    mainPinRemoveHandler();
+  };
+
+  var mainPinRemoveHandler = function () {
+    document.body.removeEventListener('mousemove', mainPinMousemoveHandler);
+    document.body.removeEventListener('mouseup', mainPinMouseupHandler);
+  };
 
   function MainPin() { }
-
-  MainPin.prototype.getCoords = function () {
-    mainPinCoords();
-  };
 
   /**
 * Обработчик нажатия на кнопку мыши, выподняет колбэк при условии нажатия
 * левой кнопки мыши
 * @param {Object} cb
 */
-  MainPin.prototype.addClickHandler = function (cb) {
+  var addClickHandler = function (cb) {
     mainPin.addEventListener('click', function (evt) {
       var mapFadded = document.querySelector('.map--faded');
       if (evt.which === 1 && mapFadded) {
@@ -93,7 +106,7 @@
   * Обработчик нажатия Enter на кливиатуре, выподняет колбэк
   * @param {Object} cb
   */
-  MainPin.prototype.addKeydownHandler = function (cb) {
+  var addKeydownHandler = function (cb) {
 
     mainPin.addEventListener('keydown', function (evt) {
       var mapFadded = document.querySelector('.map--faded');
@@ -101,6 +114,17 @@
         cb();
       }
     }, { 'once': true });
+  };
+
+  var addMousedownHandler = function () {
+    mainPin.addEventListener('mousedown', mainPinMousedownHandler);
+  };
+
+  MainPin.prototype.initMainPin = function (cb) {
+    mainPinCoords();
+    addClickHandler(cb);
+    addKeydownHandler(cb);
+    addMousedownHandler();
   };
 
   App.MainPin = MainPin;
