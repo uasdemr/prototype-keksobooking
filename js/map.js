@@ -17,8 +17,8 @@
     var mapPin = pin.querySelector('.map__pin').cloneNode(true);
     var mapPinImg = mapPin.querySelector('img');
 
-    mapPin.style.left = obj.location.x;
-    mapPin.style.top = obj.location.y;
+    mapPin.style.left = obj.location.x + 'px';
+    mapPin.style.top = obj.location.y + 'px';
     mapPinImg.src = obj.author.avatar;
     mapPinImg.alt = obj.offer.title;
     return mapPin;
@@ -63,10 +63,11 @@
   };
 
   // в будущем сюда придет модуль load со всеми методами?
-  function Map(db, card) {
+  function Map(load, card) {
     // this.db = db;
     // this.data = db.getAll();
-    Map.data = db.getAll();
+    // Map.data = db.getAll();
+    this.load = load;
     Map.card = card;
   }
 
@@ -102,7 +103,8 @@
   Map.prototype.activate = function () {
     mapEnabler();
     // var data = this.db.getAll();
-    mapPinsRender(Map.data);
+    // mapPinsRender(Map.data);
+    this.load.getJson(mapPinsRender);
     mapPins.addEventListener('click', mapPinsClickHandler);
     mapPins.addEventListener('keydown', mapPinsKeydownHandler);
     document.addEventListener('keydown', documentKeydownHandler);

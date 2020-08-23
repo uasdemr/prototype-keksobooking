@@ -86,8 +86,6 @@
     document.body.removeEventListener('mouseup', mainPinMouseupHandler);
   };
 
-  function MainPin() { }
-
   /**
 * Обработчик нажатия на кнопку мыши, выподняет колбэк при условии нажатия
 * левой кнопки мыши
@@ -99,7 +97,7 @@
       if (evt.which === 1 && mapFadded) {
         cb();
       }
-    }, { 'once': true });
+    }, {'once': true});
   };
 
   /**
@@ -113,12 +111,14 @@
       if (evt.code === 'Enter' && mapFadded) {
         cb();
       }
-    }, { 'once': true });
+    }, {'once': true});
   };
 
   var addMousedownHandler = function () {
     mainPin.addEventListener('mousedown', mainPinMousedownHandler);
   };
+
+  function MainPin() { }
 
   MainPin.prototype.initMainPin = function (cb) {
     mainPinCoords();

@@ -1,11 +1,12 @@
 'use strict';
 (function () {
   var App = window.App || {};
-  var DataStore = App.DataStore;
+  var load = new App.Load();
   var card = new App.Card();
   // В будущем, в map прилетит конструктор filter, в котором уже будут
   // данные из getJson
-  var map = new App.Map(new DataStore(), card);
+  // var map = new App.Map(new DataStore(), card);
+  var map = new App.Map(load, card);
   var mainPin = new App.MainPin();
   var addForm = new App.AddForm();
   var filtersForm = new App.FiltersForm();

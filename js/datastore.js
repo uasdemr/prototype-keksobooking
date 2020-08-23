@@ -116,7 +116,6 @@
   };
 
   function DataStore() {
-    console.log('running the DataStore function');
     this.data = dataCreator();
   }
 
