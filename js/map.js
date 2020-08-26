@@ -25,6 +25,7 @@
   };
 
   var mapPinsRender = function (data) {
+    Map.data = data;
     var fragment = document.createDocumentFragment();
     data.forEach(function (item) {
       fragment.append(pinCreator(item));
@@ -33,10 +34,27 @@
   };
 
   /**
+   * Удаляет пины
+   */
+  var mapPisRemover = function () {
+    var pins = mapPins.querySelectorAll('.map__pin:not(.map__pin--main)');
+    for (var i = 0; i < pins.length; i++) {
+      pins[i].remove();
+    }
+  };
+
+  /**
  * Функция активирует карту
  */
   var mapEnabler = function () {
     map.classList.remove('map--faded');
+  };
+
+  /**
+ * Деактивирует карту
+ */
+  var mapDeactivator = function () {
+    map.classList.add('map--faded');
   };
 
   var cardRemover = function () {
@@ -108,6 +126,11 @@
     mapPins.addEventListener('click', mapPinsClickHandler);
     mapPins.addEventListener('keydown', mapPinsKeydownHandler);
     document.addEventListener('keydown', documentKeydownHandler);
+  };
+
+  Map.prototype.deactivate = function () {
+    mapPisRemover();
+    mapDeactivator();
   };
 
   App.Map = Map;

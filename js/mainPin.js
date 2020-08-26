@@ -97,7 +97,7 @@
       if (evt.which === 1 && mapFadded) {
         cb();
       }
-    }, {'once': true});
+    });
   };
 
   /**
@@ -111,7 +111,7 @@
       if (evt.code === 'Enter' && mapFadded) {
         cb();
       }
-    }, {'once': true});
+    });
   };
 
   var addMousedownHandler = function () {
